@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UUID Generator</title>
+    <style>
+        body { font-family: sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; background: #f0f2f5; }
+        .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: center; width: 350px; }
+        #keyBox { background: #f8f9fa; border: 1px solid #ddd; padding: 15px; border-radius: 6px; font-family: monospace; margin: 20px 0; min-height: 1.2em; word-break: break-all; }
+        button { width: 100%; padding: 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; transition: 0.2s; }
+        .btn-get { background: #007bff; color: white; }
+        .btn-get:hover { background: #0056b3; }
+        .btn-get:disabled { background: #ccc; }
+        .btn-copy { background: #28a745; color: white; display: none; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Ваш уникальный ключ</h2>
+    <div id="keyBox">Нажмите кнопку ниже</div>
+    
+    <button id="getBtn" class="btn-get">ПОЛУЧИТЬ КЛЮЧ</button>
+    <button id="copyBtn" class="btn-copy">КОПИРОВАТЬ</button>
+</div>
+
+<script>
+    const getBtn = document.getElementById('getBtn');
+    const copyBtn = document.getElementById('copyBtn');
+    const keyBox = document.getElementById('keyBox');
+
+    const localKey = localStorage.getItem('user_uuid');
+    if (localKey) {
+        renderKey(localKey);
+    }
+
+    async function fetchKey() {
+        getBtn.disabled = true;
+        getBtn.innerText = "Загрузка...";
+
+        try {
+            const response = await fetch('https://gimer.pythonanywhere.com/get-key');
+            const data = await response.json();
+
+            if (response.ok) {
+                localStorage.setItem('user_uuid', data.key);
+                renderKey(data.key);
+                copyToClipboard(data.key);
+                alert("Ключ получен и скопирован!");
+            } else {
+                keyBox.innerText = data.error || "Ошибка";
+                getBtn.innerText = "Попробовать снова";
+                getBtn.disabled = false;
+            }
+        } catch (err) {
+            keyBox.innerText = "Сервер недоступен";
+            getBtn.disabled = false;
+            getBtn.innerText = "Ошибка сети";
+        }
+    }
+
+    function renderKey(key) {
+        keyBox.innerText = key;
+        getBtn.style.display = 'none'; 
+        copyBtn.style.display = 'block'; 
+    }
+
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text);
+    }
+
+    getBtn.onclick = fetchKey;
+    copyBtn.onclick = () => {
+        copyToClipboard(keyBox.innerText);
+        alert("Скопировано!");
+    };
+</script>
+
+</body>
+</html>
