@@ -32,7 +32,7 @@
     const copyBtn = document.getElementById('copyBtn');
     const keyBox = document.getElementById('keyBox');
 
-    const localKey = localStorage.getItem('user_uuid');
+    const localKey = localStorage.getItem('link');
     if (localKey) {
         renderKey(localKey);
     }
@@ -46,9 +46,9 @@
             const data = await response.json();
 
             if (response.ok) {
-                localStorage.setItem('user_uuid', data.key);
-                renderKey(data.key);
-                copyToClipboard(data.key);
+                localStorage.setItem('link', data.link);
+                renderKey(data.link);
+                copyToClipboard(data.link);
                 alert("Ключ получен и скопирован!");
             } else {
                 keyBox.innerText = data.error || "Ошибка";
@@ -63,7 +63,7 @@
     }
 
     function renderKey(key) {
-        keyBox.innerText = key;
+        keyBox.innerText = link;
         getBtn.style.display = 'none'; 
         copyBtn.style.display = 'block'; 
     }
