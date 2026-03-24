@@ -46,9 +46,9 @@
             const data = await response.json();
 
             if (response.ok) {
-                localStorage.setItem('link', data.link);
-                renderKey(data.link);
-                copyToClipboard(data.link);
+                localStorage.setItem('link', data.key);
+                renderKey(data.key);
+                copyToClipboard(data.key);
                 alert("Ключ получен и скопирован!");
             } else {
                 keyBox.innerText = data.error || "Ошибка";
@@ -63,7 +63,7 @@
     }
 
     function renderKey(key) {
-        keyBox.innerText = link;
+        keyBox.innerText = key;
         getBtn.style.display = 'none'; 
         copyBtn.style.display = 'block'; 
     }
